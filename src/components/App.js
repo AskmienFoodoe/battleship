@@ -171,7 +171,7 @@ class App extends React.Component {
         if (this.state.gameState === 'setup') {
             return (
                 <Fragment>
-                    <h3>Player {this.state.turn}'s turn to add ships</h3>
+                    <h2>Player {this.state.turn}'s turn to add ships</h2>
                     <Grid 
                         shipGrid={this.state.players[this.state.turn].shipGrid}
                         hitGrid={this.state.players[this.state.turn].hitGrid} 
@@ -191,7 +191,7 @@ class App extends React.Component {
         else if (this.state.gameState === 'battle') {
             return (
                 <Fragment>
-                    <h3>Player {this.state.turn}'s turn to attack</h3>
+                    <h2>Player {this.state.turn}'s turn to attack</h2>
                     <table>
                         <tr>
                             <td>
@@ -214,15 +214,15 @@ class App extends React.Component {
                             </td>
                         </tr>
                         <tr>
-                            <td>
+                            <td style={{verticalAlign: 'top'}}>
                                 <table>
-                                    <th>Ships Destroyed:</th>
+                                    <th style={{textAlign: 'left'}}>Ships Destroyed:</th>
                                     {this.state.players[this.state.turn].shipsDestroyed.map(ship => <tr>{ship.name} (size {ship.size})</tr>)}
                                 </table>
                             </td>
-                            <td>
+                            <td style={{verticalAlign: 'top'}}>
                                 <table>
-                                    <th>Ships Remaining:</th>
+                                    <th style={{textAlign: 'left'}}>Ships Remaining:</th>
                                     {this.state.players[this.state.turn].ships.map(ship => <tr>{ship.name} (size {ship.size})</tr>)}
                                 </table>
                             </td>
@@ -239,7 +239,7 @@ class App extends React.Component {
         else if (this.state.gameState === 'victory') {
             return (
                 <Fragment>
-                    <h2>Player {this.state.turn} wins!</h2>
+                    <h1>Player {this.state.turn} wins!</h1>
                     <table>
                         <tr>
                             <td>
@@ -261,16 +261,16 @@ class App extends React.Component {
                             </td>
                         </tr>
                         <tr>
-                            <td>
+                            <td style={{verticalAlign: 'top'}}>
                                 <table>
-                                    <th>Ships Destroyed:</th>
-                                    {this.state.players[this.state.turn].shipsDestroyed.map(ship => <tr>{ship.name}</tr>)}
+                                    <th style={{textAlign: 'left'}}>Ships Destroyed:</th>
+                                    {this.state.players[this.state.turn].shipsDestroyed.map(ship => <tr>{ship.name} (size {ship.size})</tr>)}
                                 </table>
                             </td>
-                            <td>
+                            <td style={{verticalAlign: 'top'}}>
                                 <table>
-                                    <th>Ships Remaining:</th>
-                                    {this.state.players[this.state.turn].ships.map(ship => <tr>{ship.name}</tr>)}
+                                    <th style={{textAlign: 'left'}}>Ships Remaining:</th>
+                                    {this.state.players[this.state.turn].ships.map(ship => <tr>{ship.name} (size {ship.size})</tr>)}
                                 </table>
                             </td>
 
