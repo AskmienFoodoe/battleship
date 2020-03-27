@@ -16,7 +16,7 @@ const Square = (props) => {
             style={{backgroundColor: color, border: '1px solid black', width: '50px', height: '50px'}} 
             onClick={e => props.handleClick(props.r, props.c)}
         >
-            (f,{props.hit})
+            ({props.ship ? props.ship.name[0] : 'e'},{props.hit})
         </td>
     )
     

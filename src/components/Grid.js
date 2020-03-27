@@ -11,9 +11,11 @@ class Grid extends React.Component {
         this.handleClick = this.handleClick.bind(this)
     }
 
-    handleClick = (r,c) => {
+    handleClick = (r, c, ship) => {
         if (this.props.gameState === 'setup') {
-            this.props.addShip(new Ship(3), r, c)
+            this.props.addShip(r, c)
+        } else if (this.props.gameState === 'battle') {
+            this.props.tryHit(r, c, ship)
         }
     }
 

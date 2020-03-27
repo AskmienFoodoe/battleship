@@ -31,25 +31,30 @@ export class Ship {
 
 class Player {
     constructor() {
-        this.ships = [new Ship(1), new Ship(1), new Ship(2),new Ship(2), new Ship(3), new Ship(4), new Ship(5)]
+        this.ships = []
         this.shipGrid = Array(10).fill().map(()=>Array(10).fill(null))
         this.hitGrid = Array(10).fill().map(()=>Array(10).fill(-1))
     }
 }
 
 class App extends React.Component {
-    
+     
     state = {
         gameState: 'setup',
         turn: 1,
         orientation: 'h',
-        players: {1: new Player, 2: new Player}
+        players: {1: new Player, 2: new Player},
+        shipsToAdd: [new Ship(5),new Ship(4),new Ship(3),new Ship(2),new Ship(2),new Ship(1),new Ship(1),
+            new Ship(5),new Ship(4),new Ship(3),new Ship(2),new Ship(2),new Ship(1),new Ship(1)]
+
     }
 
-    addShip = (ship, r, c) => {
+    addShip = (r, c) => {
 
         let players = this.state.players
         let turn = this.state.turn
+        let shipsToAdd = this.state.shipsToAdd
+        let ship = shipsToAdd[0]
 
         if (this.state.orientation === 'v') {
             for (let i = r; i < r + ship.size; i++) {
@@ -80,8 +85,8 @@ class App extends React.Component {
                 players[turn].shipGrid[r][i] = ship
             }
         }
-
-        this.setState({players: players})
+        players[turn].ships.push(shipsToAdd.shift())
+        this.setState({players: players, shipsToAdd: shipsToAdd})
     }
 
     changeOrientation = () => {
@@ -95,6 +100,14 @@ class App extends React.Component {
 
     componentDidUpdate = () => {
         console.log(this.state)
+        if (this.state.gameState === 'setup') {
+            if (this.state.turn === 1 && this.state.players[1].ships.length === 7) {
+                this.setState({turn: 2})
+            }
+            if (this.state.turn === 2 && this.state.players[2].ships.length === 7) {
+                this.setState({turn: 1, gameState: 'battle'})
+            }
+        }
     }
 
     render = () => {
@@ -102,19 +115,37 @@ class App extends React.Component {
         if (this.state.gameState === 'setup') {
             return (
                 <Fragment>
+                    <h3>Player {this.state.turn}'s turn to add ships</h3>
                     <Grid 
                         shipGrid={this.state.players[this.state.turn].shipGrid}
                         hitGrid={this.state.players[this.state.turn].hitGrid} 
                         gameState={this.state.gameState}
                         addShip={this.addShip}
                     />
+                    <h4>Currently adding {this.state.shipsToAdd[0] ? this.state.shipsToAdd[0].name : 'null'} (size {this.state.shipsToAdd[0] ? this.state.shipsToAdd[0].size : 0})</h4>
                     <button onClick={e => this.changeOrientation()}>
                         Change Orientation (currently {this.state.orientation})
                     </button>
                 </Fragment>
             )
         } else if (this.state.gameState === 'battle') {
-            
+            return (
+                <Fragment>
+                    <h3>Player {this.state.turn}'s turn to attack</h3>
+                    <Grid 
+                        shipGrid={this.state.players[this.state.turn % 2 + 1].shipGrid}
+                        hitGrid={this.state.players[this.state.turn % 2 + 1].hitGrid} 
+                        gameState={this.state.gameState}
+                        tryHit={this.tryHit}
+                    />
+                    <Grid 
+                        shipGrid={this.state.players[this.state.turn].shipGrid}
+                        hitGrid={this.state.players[this.state.turn].hitGrid} 
+                        gameState={this.state.gameState}
+                        addShip={this.addShip}
+                    />
+                </Fragment>
+            )
         }
 
         return (
