@@ -60,7 +60,7 @@ class App extends React.Component {
     state = {
         gameState: 'setup',
         turn: 1,
-        orientation: 'h',
+        orientation: 'horizontal',
         players: {1: new Player, 2: new Player},
         shipsToAdd: [new Ship(5),new Ship(4),new Ship(3),new Ship(2),new Ship(2),new Ship(1),new Ship(1),
             new Ship(5),new Ship(4),new Ship(3),new Ship(2),new Ship(2),new Ship(1),new Ship(1)]
