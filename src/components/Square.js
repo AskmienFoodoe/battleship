@@ -5,8 +5,12 @@ const Square = (props) => {
 
     let color;
 
-    if (props.ship) {
+    if (props.hit && props.ship) {
+        color = 'orange'
+    } else if (props.ship && !props.invisible) {
         color = 'gray'
+    } else if (props.hit && !props.ship) {
+        color = 'cyan'
     } else{
         color = 'white'
     }
@@ -14,7 +18,7 @@ const Square = (props) => {
     return (
         <td 
             style={{backgroundColor: color, border: '1px solid black', width: '50px', height: '50px'}} 
-            onClick={e => props.handleClick(props.r, props.c)}
+            onClick={e => props.handleClick(props)}
         >
             ({props.ship ? props.ship.name[0] : 'e'},{props.hit})
         </td>

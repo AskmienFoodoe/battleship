@@ -11,18 +11,20 @@ class Grid extends React.Component {
         this.handleClick = this.handleClick.bind(this)
     }
 
-    handleClick = (r, c, ship) => {
-        if (this.props.gameState === 'setup') {
-            this.props.addShip(r, c)
-        } else if (this.props.gameState === 'battle') {
-            this.props.tryHit(r, c, ship)
+    handleClick = (values) => {
+        if (this.props.handleClick) {
+            this.props.handleClick(values)
         }
     }
 
     makeRow = (row, rowIndex) => {
         return (
             <tr>
-                {row.map((info, colIndex) => <Square ship={info[0]} hit={info[1]} r={rowIndex} c={colIndex} handleClick={this.handleClick}/>)}
+                {row.map((info, colIndex) => <Square 
+                                                ship={info[0]} hit={info[1]} 
+                                                r={rowIndex} c={colIndex} 
+                                                invisible={this.props.invisible} 
+                                                handleClick={this.handleClick}/>)}
             </tr>
         )
     }

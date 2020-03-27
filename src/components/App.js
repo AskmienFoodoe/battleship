@@ -32,8 +32,9 @@ export class Ship {
 class Player {
     constructor() {
         this.ships = []
+        this.shipsDestroyed = []
         this.shipGrid = Array(10).fill().map(()=>Array(10).fill(null))
-        this.hitGrid = Array(10).fill().map(()=>Array(10).fill(-1))
+        this.hitGrid = Array(10).fill().map(()=>Array(10).fill(0))
     }
 }
 
@@ -49,7 +50,7 @@ class App extends React.Component {
 
     }
 
-    addShip = (r, c) => {
+    addShip = ({r, c}) => {
 
         let players = this.state.players
         let turn = this.state.turn
@@ -98,6 +99,27 @@ class App extends React.Component {
         }
     }
 
+    tryHit = ({r, c, ship}) => {
+        let players = this.state.players
+        let turn = this.state.turn
+
+        if (players[turn % 2 + 1].hitGrid[r][c] === 1) {
+            return
+        }
+
+        players[turn % 2 + 1].hitGrid[r][c] = 1
+
+        if (ship) {
+            ship.health -= 1
+            if (ship.health === 0) {
+                players[turn].shipsDestroyed.push(ship)
+                players[turn % 2 + 1].ships = players[turn % 2 + 1].ships.filter(ship => ship.health > 0)
+            }
+        }
+
+        this.setState({players: players, turn: turn % 2 + 1})
+    }
+
     componentDidUpdate = () => {
         console.log(this.state)
         if (this.state.gameState === 'setup') {
@@ -106,6 +128,13 @@ class App extends React.Component {
             }
             if (this.state.turn === 2 && this.state.players[2].ships.length === 7) {
                 this.setState({turn: 1, gameState: 'battle'})
+            }
+        } else if (this.state.gameState === 'battle') {
+            if (this.state.players[1].ships.length === 0) {
+                this.setState({turn: 1,gameState: 'victory'})
+            }
+            if (this.state.players[2].ships.length === 0) {
+                this.setState({turn: 2, gameState: 'victory'})
             }
         }
     }
@@ -120,7 +149,7 @@ class App extends React.Component {
                         shipGrid={this.state.players[this.state.turn].shipGrid}
                         hitGrid={this.state.players[this.state.turn].hitGrid} 
                         gameState={this.state.gameState}
-                        addShip={this.addShip}
+                        handleClick={this.addShip}
                     />
                     <h4>Currently adding {this.state.shipsToAdd[0] ? this.state.shipsToAdd[0].name : 'null'} (size {this.state.shipsToAdd[0] ? this.state.shipsToAdd[0].size : 0})</h4>
                     <button onClick={e => this.changeOrientation()}>
@@ -132,19 +161,35 @@ class App extends React.Component {
             return (
                 <Fragment>
                     <h3>Player {this.state.turn}'s turn to attack</h3>
-                    <Grid 
-                        shipGrid={this.state.players[this.state.turn % 2 + 1].shipGrid}
-                        hitGrid={this.state.players[this.state.turn % 2 + 1].hitGrid} 
-                        gameState={this.state.gameState}
-                        tryHit={this.tryHit}
-                    />
-                    <Grid 
-                        shipGrid={this.state.players[this.state.turn].shipGrid}
-                        hitGrid={this.state.players[this.state.turn].hitGrid} 
-                        gameState={this.state.gameState}
-                        addShip={this.addShip}
-                    />
+                    <table>
+                        <tr>
+                            <td>
+                                <h4>Opponent's Grid</h4>
+                                <Grid 
+                                    shipGrid={this.state.players[this.state.turn % 2 + 1].shipGrid}
+                                    hitGrid={this.state.players[this.state.turn % 2 + 1].hitGrid} 
+                                    gameState={this.state.gameState}
+                                    handleClick={this.tryHit}
+                                    invisible
+                                />
+                            </td>
+                            <td>
+                                <h4>Your Grid</h4>
+                                <Grid 
+                                    shipGrid={this.state.players[this.state.turn].shipGrid}
+                                    hitGrid={this.state.players[this.state.turn].hitGrid} 
+                                    gameState={this.state.gameState}
+                                />
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    
                 </Fragment>
+            )
+        } else if (this.state.gameState === 'victory') {
+            return (
+                <h2>Player {this.state.turn} wins!</h2>
             )
         }
 
