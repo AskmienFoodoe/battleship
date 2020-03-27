@@ -1,21 +1,39 @@
 import React from 'react'
+import {Ship} from './App'
 import Square from './Square'
+import * as lodash from 'lodash'
 
 
 class Grid extends React.Component {
 
-    makeRow = (row) => {
+    constructor(props) {
+        super(props)
+        this.handleClick = this.handleClick.bind(this)
+    }
+
+    handleClick = (r,c) => {
+        if (this.props.gameState === 'setup') {
+            this.props.addShip(new Ship(3), r, c)
+        }
+    }
+
+    makeRow = (row, rowIndex) => {
         return (
             <tr>
-                {row.map(r => <Square r={r}/>)}
+                {row.map((info, colIndex) => <Square ship={info[0]} hit={info[1]} r={rowIndex} c={colIndex} handleClick={this.handleClick}/>)}
             </tr>
         )
     }
 
+    componentDidUpdate = () => {
+
+    }
+
     render = () => {
+        let gridInfo = lodash.zipWith(this.props.shipGrid, this.props.hitGrid, lodash.zip)
         return (
             <table>
-                {this.props.grid.map(this.makeRow)}
+                {gridInfo.map(this.makeRow)}
             </table>
             
         )
