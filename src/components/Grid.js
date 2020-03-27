@@ -21,10 +21,14 @@ class Grid extends React.Component {
         return (
             <tr>
                 {row.map((info, colIndex) => <Square 
-                                                ship={info[0]} hit={info[1]} 
-                                                r={rowIndex} c={colIndex} 
+                                                ship={info[0]}
+                                                hit={info[1]} 
+                                                r={rowIndex}
+                                                c={colIndex} 
                                                 invisible={this.props.invisible} 
-                                                handleClick={this.handleClick}/>)}
+                                                handleClick={this.handleClick}
+                                                />
+                )}
             </tr>
         )
     }

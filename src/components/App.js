@@ -117,7 +117,8 @@ class App extends React.Component {
             }
         }
 
-        this.setState({players: players, turn: turn % 2 + 1})
+        this.setState({players: players})
+        this.timer = setTimeout(() => {this.setState({turn: turn % 2 + 1})}, 1000)
     }
 
     componentDidUpdate = () => {
@@ -131,10 +132,12 @@ class App extends React.Component {
             }
         } else if (this.state.gameState === 'battle') {
             if (this.state.players[1].ships.length === 0) {
-                this.setState({turn: 1,gameState: 'victory'})
+                clearTimeout(this.timer)
+                this.setState({turn: 2,gameState: 'victory'})
             }
             if (this.state.players[2].ships.length === 0) {
-                this.setState({turn: 2, gameState: 'victory'})
+                clearTimeout(this.timer)
+                this.setState({turn: 1, gameState: 'victory'})
             }
         }
     }
@@ -179,8 +182,23 @@ class App extends React.Component {
                                     shipGrid={this.state.players[this.state.turn].shipGrid}
                                     hitGrid={this.state.players[this.state.turn].hitGrid} 
                                     gameState={this.state.gameState}
-                                />
+                                />                         
                             </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table>
+                                    <th>Ships Destroyed:</th>
+                                    {this.state.players[this.state.turn].shipsDestroyed.map(ship => <tr>{ship.name} (size {ship.size})</tr>)}
+                                </table>
+                            </td>
+                            <td>
+                                <table>
+                                    <th>Ships Remaining:</th>
+                                    {this.state.players[this.state.turn].ships.map(ship => <tr>{ship.name} (size {ship.size})</tr>)}
+                                </table>
+                            </td>
+
                         </tr>
                     </table>
                     
@@ -189,7 +207,45 @@ class App extends React.Component {
             )
         } else if (this.state.gameState === 'victory') {
             return (
-                <h2>Player {this.state.turn} wins!</h2>
+                <Fragment>
+                    <h2>Player {this.state.turn} wins!</h2>
+                    <table>
+                        <tr>
+                            <td>
+                                <h4>Opponent's Grid</h4>
+                                <Grid 
+                                    shipGrid={this.state.players[this.state.turn % 2 + 1].shipGrid}
+                                    hitGrid={this.state.players[this.state.turn % 2 + 1].hitGrid} 
+                                    gameState={this.state.gameState}
+                                    invisible
+                                />
+                            </td>
+                            <td>
+                                <h4>Your Grid</h4>
+                                <Grid 
+                                    shipGrid={this.state.players[this.state.turn].shipGrid}
+                                    hitGrid={this.state.players[this.state.turn].hitGrid} 
+                                    gameState={this.state.gameState}
+                                />                         
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table>
+                                    <th>Ships Destroyed:</th>
+                                    {this.state.players[this.state.turn].shipsDestroyed.map(ship => <tr>{ship.name}</tr>)}
+                                </table>
+                            </td>
+                            <td>
+                                <table>
+                                    <th>Ships Remaining:</th>
+                                    {this.state.players[this.state.turn].ships.map(ship => <tr>{ship.name}</tr>)}
+                                </table>
+                            </td>
+
+                        </tr>
+                    </table>
+                </Fragment>
             )
         }
 
