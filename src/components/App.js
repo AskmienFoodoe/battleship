@@ -1,7 +1,13 @@
 import React, {Fragment} from 'react'
 import Grid from './Grid';
 
-
+/**
+ * A ship has a size, a name, and a health value (to keep track of when it is destroyed)
+ *  - size: the length of the ship. the ship always has dimensions size x 1 or 1 x size
+ *  - name: depends on the size
+ *  - health: when this value depletes, the ship is removed from the player's list of surviving ships
+ *              and added to the opponents list of destroyed ships
+ */
 export class Ship {
     constructor(size) {
         this.size = size
@@ -29,6 +35,13 @@ export class Ship {
     }
 }
 
+/**
+ * Keeps tracks of the player's ships and grid
+ *  - ships: contains the player's surviving ships
+ *  - shipsDestroyed: contains the ships the player has destroyed
+ *  - shipGrid: keeps track of the positions of the player's ships
+ *  - hitGrid: keeps track of which squares have been hit by the opponent
+ */
 class Player {
     constructor() {
         this.ships = []
@@ -39,7 +52,11 @@ class Player {
 }
 
 class App extends React.Component {
-     
+    
+    /**
+     * Three gameStates: setup, battle, victory. During setup, ships are placed. During battle, players 
+     *  fire at each other. During victory, the victory message is shown.
+     */
     state = {
         gameState: 'setup',
         turn: 1,
@@ -50,6 +67,8 @@ class App extends React.Component {
 
     }
 
+    //Attempts to add a ship to the grid at position (r,c), alerts if out of bounds or overlaps.
+    //Only accessible during setup.
     addShip = ({r, c}) => {
 
         let players = this.state.players
@@ -57,7 +76,7 @@ class App extends React.Component {
         let shipsToAdd = this.state.shipsToAdd
         let ship = shipsToAdd[0]
 
-        if (this.state.orientation === 'v') {
+        if (this.state.orientation === 'vertical') {
             for (let i = r; i < r + ship.size; i++) {
                 if (i > 9) {
                     alert('Invalid placement, out of bounds')
@@ -71,7 +90,7 @@ class App extends React.Component {
             for (let i = r; i < r + ship.size; i++) {
                 players[turn].shipGrid[i][c] = ship
             }
-        } else if (this.state.orientation === 'h') {
+        } else if (this.state.orientation === 'horizontal') {
             for (let i = c; i < c + ship.size; i++) {
                 if (i > 9) {
                     alert('Invalid placement, out of bounds')
@@ -90,15 +109,18 @@ class App extends React.Component {
         this.setState({players: players, shipsToAdd: shipsToAdd})
     }
 
+    //Changes orientation from vertical to horizontal. Only accessible during setup.
     changeOrientation = () => {
-        if (this.state.orientation === 'h') {
-            this.setState({orientation: 'v'})
+        if (this.state.orientation === 'horizontal') {
+            this.setState({orientation: 'vertical'})
         }
-        if (this.state.orientation === 'v') {
-            this.setState({orientation: 'h'})
+        if (this.state.orientation === 'vertical') {
+            this.setState({orientation: 'horizontal'})
         }
     }
 
+    //Attempts to hit position (r,c), then switches turns after a delay.
+    //Only accessible during battle.
     tryHit = ({r, c, ship}) => {
         let players = this.state.players
         let turn = this.state.turn
@@ -121,6 +143,7 @@ class App extends React.Component {
         this.timer = setTimeout(() => {this.setState({turn: turn % 2 + 1})}, 1000)
     }
 
+    //Switches to P2's setup when P1 is done, and switches between setup and battle, battle and victory.
     componentDidUpdate = () => {
         console.log(this.state)
         if (this.state.gameState === 'setup') {
@@ -144,6 +167,7 @@ class App extends React.Component {
 
     render = () => {
 
+        //Shows only current player's grid for placing ships.
         if (this.state.gameState === 'setup') {
             return (
                 <Fragment>
@@ -160,7 +184,11 @@ class App extends React.Component {
                     </button>
                 </Fragment>
             )
-        } else if (this.state.gameState === 'battle') {
+        } 
+
+        //Shows both players' grids, ships are hidden on opponents grid and it is clickable.
+        //Current player's grid is uninteractable.
+        else if (this.state.gameState === 'battle') {
             return (
                 <Fragment>
                     <h3>Player {this.state.turn}'s turn to attack</h3>
@@ -205,7 +233,10 @@ class App extends React.Component {
                     
                 </Fragment>
             )
-        } else if (this.state.gameState === 'victory') {
+        } 
+        
+        //Same grids as battle, but now uninteractable. Also shows victory message.
+        else if (this.state.gameState === 'victory') {
             return (
                 <Fragment>
                     <h2>Player {this.state.turn} wins!</h2>

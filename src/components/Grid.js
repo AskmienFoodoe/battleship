@@ -1,5 +1,4 @@
 import React from 'react'
-import {Ship} from './App'
 import Square from './Square'
 import * as lodash from 'lodash'
 
@@ -33,11 +32,9 @@ class Grid extends React.Component {
         )
     }
 
-    componentDidUpdate = () => {
-
-    }
-
     render = () => {
+        
+        //Zips the shipGrid and hitGrid together to make it easier to map over
         let gridInfo = lodash.zipWith(this.props.shipGrid, this.props.hitGrid, lodash.zip)
         return (
             <table>
