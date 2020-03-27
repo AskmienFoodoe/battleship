@@ -3,8 +3,8 @@
 Basic web app to simulate the game battleship.
 
 ### Libraries used
-React
-Lodash
+* React
+* Lodash
 
 ### Instructions
 * First, player one sets all seven of their ships in order of length (5, 4, 3, 2, 2, 1, 1) by clicking on the grid. The button at the bottom can be used to switch the orientation (in vertical orientation, the top of the ship will be placed at the clicked square; in horizontal orientation, the left end of the ship will be placed at the clicked square).
